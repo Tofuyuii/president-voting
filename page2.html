@@ -36,7 +36,7 @@
     <div class="left">
       <a href="index.html">รวม</a>
       <a href="page1.html">ตึก 4</a>
-      <a href="page2.html"class="active">ตึก 5</a>
+      <a href="page2.html" class="active">ตึก 5</a>
       <a href="page3.html">ลานพฤกษา</a>
     </div>
 
@@ -50,49 +50,23 @@
   <h2>ตึก 5</h2>
 
   <div class="card">
-    <p>
-      คะแนนผู้สมัครหมายเลข 1<br>
-      นางสาวพิมรดา จรูญผล
-    </p>
-    <input
-      id="p1_c1"
-      class="box score"
-      onclick="add(this)"
-      disabled
-    >
+    <p>คะแนนผู้สมัครหมายเลข 1<br>นางสาวพิมรดา จรูญผล</p>
+    <input id="p2_c1" class="box score" onclick="add(this)" disabled>
   </div>
 
   <div class="card">
-    <p>
-      คะแนนผู้สมัครหมายเลข 2<br>
-      นางสาวรมย์นลิน สุวรรณรัตน์
-    </p>
-    <input
-      id="p1_c2"
-      class="box score"
-      onclick="add(this)"
-      disabled
-    >
+    <p>คะแนนผู้สมัครหมายเลข 2<br>นางสาวรมย์นลิน สุวรรณรัตน์</p>
+    <input id="p2_c2" class="box score" onclick="add(this)" disabled>
   </div>
 
   <div class="card">
     <p>จำนวนบัตรเสีย</p>
-    <input
-      id="p1_bad"
-      class="box score"
-      onclick="add(this)"
-      disabled
-    >
+    <input id="p2_bad" class="box score" onclick="add(this)" disabled>
   </div>
 
   <div class="card">
     <p>จำนวนผู้ไม่ประสงค์ลงคะแนน</p>
-    <input
-      id="p1_no"
-      class="box score"
-      onclick="add(this)"
-      disabled
-    >
+    <input id="p2_no" class="box score" onclick="add(this)" disabled>
   </div>
 
   <div class="reset">
@@ -100,7 +74,6 @@
   </div>
 
   <script type="module">
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
@@ -117,72 +90,40 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const ids = [
-      "p2_c1",
-      "p2_c2",
-      "p2_bad",
-      "p2_no"
-    ];
+    const ids = ["p2_c1","p2_c2","p2_bad","p2_no"];
 
-    // โหลดค่าจาก Firebase
     ids.forEach(id => {
-
       const r = ref(db, "scores/" + id);
-
       onValue(r, snap => {
         document.getElementById(id).value = snap.val() || 0;
       });
-
     });
 
-    // เพิ่มคะแนน
     window.add = (el) => {
-
       if (el.disabled) return;
-
       let v = Number(el.value || 0) + 1;
       el.value = v;
-
-      set(
-        ref(db, "scores/" + el.id),
-        v
-      );
-
+      set(ref(db, "scores/" + el.id), v);
     };
 
-    // รีเซ็ต
     window.resetPage = () => {
-
       if (!unlocked) return alert("ต้องปลดล็อกก่อน");
       if (!confirm("ยืนยันรีเซ็ต?")) return;
-
-      ids.forEach(id => {
-        set(ref(db, "scores/" + id), 0);
-      });
-
+      ids.forEach(id => set(ref(db, "scores/" + id), 0));
     };
 
-    // 🔒 ระบบล็อก
     let unlocked = false;
     const PASSWORD = "src1234";
 
     window.unlock = () => {
-
       if (document.getElementById("pass").value === PASSWORD) {
-
         unlocked = true;
         document.getElementById("status").textContent = "ปลดล็อกแล้ว";
-
-        ids.forEach(id =>
-          document.getElementById(id).disabled = false
-        );
-
+        ids.forEach(id => document.getElementById(id).disabled = false);
       } else {
         alert("รหัสผิด");
       }
-
     };
-
   </script>
 
 </body>
