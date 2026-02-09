@@ -64,3 +64,4 @@ function resetPage(){
 
   alert("รีเซ็ตเรียบร้อยแล้ว");
 }
+

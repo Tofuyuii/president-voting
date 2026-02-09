@@ -4,62 +4,85 @@
 <meta charset="UTF-8">
 <title>ลานพฤกษา</title>
 <link rel="stylesheet" href="style.css">
-<script src="script.js"></script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
 </head>
-
-<div class="no1">
-    <img class="chadim" src="https://img2.pic.in.th/-1---212e6652870f81251.png"
-    width=275px id="chadim1"> 
-</div>
-<div class="no2">
-    <img class="bam" src="https://img5.pic.in.th/file/secure-sv1/-1---3e2b6fc49eb248aed.png""
-    width=275px id="bam1"> 
-</div>
 
 <body onload="loadPage()">
 
-<nav class="topbar">
-  <div class="left">
-    <a href="index.html">รวม</a>
-    <a href="page1.html">ตึก 1</a>
-    <a href="page2.html">ตึก 5</a>
-    <a href="page3.html" class="active">ลานพฤกษา</a>
-  </div>
-
-  <div class="right">
-    <input type="password" id="pass" placeholder="รหัส">
-    <button onclick="unlock()">ปลดล็อก</button>
-    <span id="status">ล็อกอยู่</span>
-  </div>
-</nav>
-
 <h2>ลานพฤกษา</h2>
 
-<div class="card"><p>คะแนนผู้สมัครหมายเลข 1<br>นางสาวพิมรดา จรูญผล</p>
-  <input id="p3_c1" class="box score" onclick="add(this)" oninput="manual(this); saveValue(this)">
-</div>
+<input id="pass" placeholder="ใส่รหัส">
+<button onclick="unlock()">ปลดล็อก</button>
+<p id="status"></p>
 
-<div class="card"><p>คะแนนผู้สมัครหมายเลข 2<br>นางสาวรมย์นลิน สุวรรณรัตน์</p>
-  <input id="p3_c2" class="box score" onclick="add(this)" oninput="manual(this); saveValue(this)">
-</div>
+<div class="card">ผู้สมัคร 1 <input id="p3_c1" class="score" onclick="add(this)" oninput="manual(this)"></div>
+<div class="card">ผู้สมัคร 2 <input id="p3_c2" class="score" onclick="add(this)" oninput="manual(this)"></div>
+<div class="card">บัตรเสีย <input id="p3_bad" class="score" onclick="add(this)" oninput="manual(this)"></div>
+<div class="card">ไม่ประสงค์ <input id="p3_no" class="score" onclick="add(this)" oninput="manual(this)"></div>
 
-<div class="card"><p>จำนวนบัตรเสีย</p>
-  <input id="p3_bad" class="box score" onclick="add(this)" oninput="manual(this); saveValue(this)">
-</div>
+<button onclick="resetPage()">รีเซ็ต</button>
 
-<div class="card"><p>จำนวนผู้ไม่ประสงค์ลงคะแนน</p>
-  <input id="p3_no" class="box score" onclick="add(this)" oninput="manual(this); saveValue(this)">
-</div>
+<script>
+let unlocked=false;
+let PASSWORD="src1234";
+function unlock(){
+ if(pass.value===PASSWORD){
+  unlocked=true;
+  status.innerText="ปลดล็อกแล้ว";
+ } else alert("รหัสผิด");
+}
+</script>
 
-<div class="reset">
-  <button onclick="resetPage()">รีเซ็ตคะแนน</button>
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
+const firebaseConfig={
+ apiKey:"AIzaSyCkpZBG5ElQT0dPRsQaBJm3_b82aFcybpI",
+ authDomain:"president-voting.firebaseapp.com",
+ databaseURL:"https://president-voting-default-rtdb.asia-southeast1.firebasedatabase.app",
+ projectId:"president-voting",
+ storageBucket:"president-voting.firebasestorage.app",
+ messagingSenderId:"427343583507",
+ appId:"1:427343583507:web:cedc455f0e035d50b5e2e6"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
+window.add=async(el)=>{
+ if(!unlocked)return alert("ต้องปลดล็อกก่อน");
+ const r=ref(db,"scores/"+el.id);
+ const s=await get(r);
+ const v=(s.val()||0)+1;
+ el.value=v;
+ await set(r,v);
+};
+
+window.manual=async(el)=>{
+ if(!unlocked)return alert("ต้องปลดล็อกก่อน");
+ let v=Number(el.value)||0;
+ await set(ref(db,"scores/"+el.id),v);
+};
+
+window.loadPage=async()=>{
+ const s=await get(ref(db,"scores"));
+ const d=s.val()||{};
+ document.querySelectorAll(".score").forEach(b=>{
+  b.value=d[b.id]||0;
+ });
+};
+
+window.resetPage=async()=>{
+ if(!unlocked)return alert("ต้องปลดล็อกก่อน");
+ if(!confirm("รีเซ็ต?"))return;
+ let obj={};
+ document.querySelectorAll(".score").forEach(b=>{
+  obj[b.id]=0;
+  b.value=0;
+ });
+ await update(ref(db,"scores"),obj);
+};
+</script>
 
 </body>
 </html>
