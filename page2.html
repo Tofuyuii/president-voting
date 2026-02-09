@@ -1,86 +1,130 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>ตึก 1</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>ตึก 5</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
-<body onload="loadPage()">
 
-<h2>ตึก 1</h2>
+<body>
 
-<input id="pass" placeholder="ใส่รหัส">
-<button onclick="unlock()">ปลดล็อก</button>
-<p id="status"></p>
+  <nav class="topbar">
+    <div class="left">
+      <a href="index.html">รวม</a>
+      <a href="page1.html">ตึก 4</a>
+      <a href="page2.html" class="active">ตึก 5</a>
+      <a href="page3.html">ลานพฤกษา</a>
+    </div>
 
-<div class="card">ผู้สมัคร 1 <input id="p1_c1" class="score" onclick="add(this)" oninput="manual(this)"></div>
-<div class="card">ผู้สมัคร 2 <input id="p1_c2" class="score" onclick="add(this)" oninput="manual(this)"></div>
-<div class="card">บัตรเสีย <input id="p1_bad" class="score" onclick="add(this)" oninput="manual(this)"></div>
-<div class="card">ไม่ประสงค์ <input id="p1_no" class="score" onclick="add(this)" oninput="manual(this)"></div>
+    <div class="right">
+      <input type="password" id="pass" placeholder="รหัส">
+      <button onclick="unlock()">ปลดล็อก</button>
+      <span id="status">ล็อกอยู่</span>
+    </div>
+  </nav>
 
-<button onclick="resetPage()">รีเซ็ต</button>
+  <h2>ตึก 5</h2>
 
-<script>
-let unlocked=false;
-let PASSWORD="src1234";
-function unlock(){
- if(pass.value===PASSWORD){
-  unlocked=true;
-  status.innerText="ปลดล็อกแล้ว";
- } else alert("รหัสผิด");
-}
-</script>
+  <div class="card">
+    <p>ผู้สมัคร 1</p>
+    <input id="p2_c1" class="box score">
+  </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+  <div class="card">
+    <p>ผู้สมัคร 2</p>
+    <input id="p2_c2" class="box score">
+  </div>
 
-const firebaseConfig={
- apiKey:"AIzaSyCkpZBG5ElQT0dPRsQaBJm3_b82aFcybpI",
- authDomain:"president-voting.firebaseapp.com",
- databaseURL:"https://president-voting-default-rtdb.asia-southeast1.firebasedatabase.app",
- projectId:"president-voting",
- storageBucket:"president-voting.firebasestorage.app",
- messagingSenderId:"427343583507",
- appId:"1:427343583507:web:cedc455f0e035d50b5e2e6"
-};
+  <div class="card">
+    <p>บัตรเสีย</p>
+    <input id="p2_bad" class="box score">
+  </div>
 
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
+  <div class="card">
+    <p>ไม่ประสงค์ลงคะแนน</p>
+    <input id="p2_no" class="box score">
+  </div>
 
-window.add=async(el)=>{
- if(!unlocked)return alert("ต้องปลดล็อกก่อน");
- const r=ref(db,"scores/"+el.id);
- const s=await get(r);
- const v=(s.val()||0)+1;
- el.value=v;
- await set(r,v);
-};
+  <div class="reset">
+    <button onclick="resetPage()">รีเซ็ต</button>
+  </div>
 
-window.manual=async(el)=>{
- if(!unlocked)return alert("ต้องปลดล็อกก่อน");
- let v=Number(el.value)||0;
- await set(ref(db,"scores/"+el.id),v);
-};
+  <script type="module">
 
-window.loadPage=async()=>{
- const s=await get(ref(db,"scores"));
- const d=s.val()||{};
- document.querySelectorAll(".score").forEach(b=>{
-  b.value=d[b.id]||0;
- });
-};
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
-window.resetPage=async()=>{
- if(!unlocked)return alert("ต้องปลดล็อกก่อน");
- if(!confirm("รีเซ็ต?"))return;
- let obj={};
- document.querySelectorAll(".score").forEach(b=>{
-  obj[b.id]=0;
-  b.value=0;
- });
- await update(ref(db,"scores"),obj);
-};
-</script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkpZBG5ElQT0dPRsQaBJm3_b82aFcybpI",
+      authDomain: "president-voting.firebaseapp.com",
+      databaseURL: "https://president-voting-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "president-voting",
+      storageBucket: "president-voting.firebasestorage.app",
+      messagingSenderId: "427343583507",
+      appId: "1:427343583507:web:cedc455f0e035d50b5e2e6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const ids = [
+      "p2_c1",
+      "p2_c2",
+      "p2_bad",
+      "p2_no"
+    ];
+
+    let unlocked = false;
+    let realPass = "";
+
+    onValue(
+      ref(db, "settings/pass"),
+      snap => realPass = snap.val()
+    );
+
+    ids.forEach(id => {
+
+      onValue(ref(db, "scores/" + id), snap => {
+        document.getElementById(id).value = snap.val() || 0;
+      });
+
+    });
+
+    window.add = (el) => {
+
+      if (!unlocked) return alert("ต้องปลดล็อกก่อน");
+
+      let v = Number(el.value || 0) + 1;
+      set(ref(db, "scores/" + el.id), v);
+
+    };
+
+    window.resetPage = () => {
+
+      if (!unlocked) return alert("ต้องปลดล็อกก่อน");
+      if (!confirm("ยืนยันรีเซ็ต?")) return;
+
+      ids.forEach(id =>
+        set(ref(db, "scores/" + id), 0)
+      );
+
+    };
+
+    window.unlock = () => {
+
+      if (document.getElementById("pass").value == realPass) {
+
+        unlocked = true;
+        document.getElementById("status").textContent = "ปลดล็อกแล้ว";
+
+      } else {
+        alert("รหัสผิด");
+      }
+
+    };
+
+  </script>
+
 </body>
 </html>
