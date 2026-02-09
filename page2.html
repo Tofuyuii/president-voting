@@ -5,15 +5,38 @@
   <title>ตึก 5</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  >
 </head>
 
 <body>
 
+  <div class="no1">
+    <img
+      class="chadim"
+      src="https://img2.pic.in.th/-1---212e6652870f81251.png"
+      width="275"
+    >
+  </div>
+
+  <div class="no2">
+    <img
+      class="bam"
+      src="https://img5.pic.in.th/file/secure-sv1/-1---3e2b6fc49eb248aed.png"
+      width="275"
+    >
+  </div>
+
   <nav class="topbar">
     <div class="left">
       <a href="index.html">รวม</a>
-      <a href="page1.html">ตึก 4</a>
-      <a href="page2.html" class="active">ตึก 5</a>
+      <a href="page1.html" class="active">ตึก 4</a>
+      <a href="page2.html">ตึก 5</a>
       <a href="page3.html">ลานพฤกษา</a>
     </div>
 
@@ -27,27 +50,53 @@
   <h2>ตึก 5</h2>
 
   <div class="card">
-    <p>ผู้สมัคร 1</p>
-    <input id="p2_c1" class="box score">
+    <p>
+      คะแนนผู้สมัครหมายเลข 1<br>
+      นางสาวพิมรดา จรูญผล
+    </p>
+    <input
+      id="p1_c1"
+      class="box score"
+      onclick="add(this)"
+      disabled
+    >
   </div>
 
   <div class="card">
-    <p>ผู้สมัคร 2</p>
-    <input id="p2_c2" class="box score">
+    <p>
+      คะแนนผู้สมัครหมายเลข 2<br>
+      นางสาวรมย์นลิน สุวรรณรัตน์
+    </p>
+    <input
+      id="p1_c2"
+      class="box score"
+      onclick="add(this)"
+      disabled
+    >
   </div>
 
   <div class="card">
-    <p>บัตรเสีย</p>
-    <input id="p2_bad" class="box score">
+    <p>จำนวนบัตรเสีย</p>
+    <input
+      id="p1_bad"
+      class="box score"
+      onclick="add(this)"
+      disabled
+    >
   </div>
 
   <div class="card">
-    <p>ไม่ประสงค์ลงคะแนน</p>
-    <input id="p2_no" class="box score">
+    <p>จำนวนผู้ไม่ประสงค์ลงคะแนน</p>
+    <input
+      id="p1_no"
+      class="box score"
+      onclick="add(this)"
+      disabled
+    >
   </div>
 
   <div class="reset">
-    <button onclick="resetPage()">รีเซ็ต</button>
+    <button onclick="resetPage()">รีเซ็ตคะแนน</button>
   </div>
 
   <script type="module">
@@ -75,48 +124,58 @@
       "p2_no"
     ];
 
-    let unlocked = false;
-    let realPass = "";
-
-    onValue(
-      ref(db, "settings/pass"),
-      snap => realPass = snap.val()
-    );
-
+    // โหลดค่าจาก Firebase
     ids.forEach(id => {
 
-      onValue(ref(db, "scores/" + id), snap => {
+      const r = ref(db, "scores/" + id);
+
+      onValue(r, snap => {
         document.getElementById(id).value = snap.val() || 0;
       });
 
     });
 
+    // เพิ่มคะแนน
     window.add = (el) => {
 
-      if (!unlocked) return alert("ต้องปลดล็อกก่อน");
+      if (el.disabled) return;
 
       let v = Number(el.value || 0) + 1;
-      set(ref(db, "scores/" + el.id), v);
+      el.value = v;
+
+      set(
+        ref(db, "scores/" + el.id),
+        v
+      );
 
     };
 
+    // รีเซ็ต
     window.resetPage = () => {
 
       if (!unlocked) return alert("ต้องปลดล็อกก่อน");
       if (!confirm("ยืนยันรีเซ็ต?")) return;
 
-      ids.forEach(id =>
-        set(ref(db, "scores/" + id), 0)
-      );
+      ids.forEach(id => {
+        set(ref(db, "scores/" + id), 0);
+      });
 
     };
 
+    // 🔒 ระบบล็อก
+    let unlocked = false;
+    const PASSWORD = "src1234";
+
     window.unlock = () => {
 
-      if (document.getElementById("pass").value == realPass) {
+      if (document.getElementById("pass").value === PASSWORD) {
 
         unlocked = true;
         document.getElementById("status").textContent = "ปลดล็อกแล้ว";
+
+        ids.forEach(id =>
+          document.getElementById(id).disabled = false
+        );
 
       } else {
         alert("รหัสผิด");

@@ -5,17 +5,16 @@
   <title>ลานพฤกษา</title>
 
   <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap"
     rel="stylesheet"
   >
 </head>
 
-<body onload="loadPage()">
+<body>
 
   <div class="no1">
     <img
@@ -36,9 +35,9 @@
   <nav class="topbar">
     <div class="left">
       <a href="index.html">รวม</a>
-      <a href="page1.html">ตึก 4</a>
+      <a href="page1.html" class="active">ตึก 4</a>
       <a href="page2.html">ตึก 5</a>
-      <a href="page3.html" class="active">ลานพฤกษา</a>
+      <a href="page3.html">ลานพฤกษา</a>
     </div>
 
     <div class="right">
@@ -56,10 +55,10 @@
       นางสาวพิมรดา จรูญผล
     </p>
     <input
-      id="p3_c1"
+      id="p1_c1"
       class="box score"
       onclick="add(this)"
-      oninput="manual(this); saveValue(this)"
+      disabled
     >
   </div>
 
@@ -69,36 +68,122 @@
       นางสาวรมย์นลิน สุวรรณรัตน์
     </p>
     <input
-      id="p3_c2"
+      id="p1_c2"
       class="box score"
       onclick="add(this)"
-      oninput="manual(this); saveValue(this)"
+      disabled
     >
   </div>
 
   <div class="card">
     <p>จำนวนบัตรเสีย</p>
     <input
-      id="p3_bad"
+      id="p1_bad"
       class="box score"
       onclick="add(this)"
-      oninput="manual(this); saveValue(this)"
+      disabled
     >
   </div>
 
   <div class="card">
     <p>จำนวนผู้ไม่ประสงค์ลงคะแนน</p>
     <input
-      id="p3_no"
+      id="p1_no"
       class="box score"
       onclick="add(this)"
-      oninput="manual(this); saveValue(this)"
+      disabled
     >
   </div>
 
   <div class="reset">
     <button onclick="resetPage()">รีเซ็ตคะแนน</button>
   </div>
+
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkpZBG5ElQT0dPRsQaBJm3_b82aFcybpI",
+      authDomain: "president-voting.firebaseapp.com",
+      databaseURL: "https://president-voting-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "president-voting",
+      storageBucket: "president-voting.firebasestorage.app",
+      messagingSenderId: "427343583507",
+      appId: "1:427343583507:web:cedc455f0e035d50b5e2e6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const ids = [
+      "p3_c1",
+      "p3_c2",
+      "p3_bad",
+      "p3_no"
+    ];
+
+    // โหลดค่าจาก Firebase
+    ids.forEach(id => {
+
+      const r = ref(db, "scores/" + id);
+
+      onValue(r, snap => {
+        document.getElementById(id).value = snap.val() || 0;
+      });
+
+    });
+
+    // เพิ่มคะแนน
+    window.add = (el) => {
+
+      if (el.disabled) return;
+
+      let v = Number(el.value || 0) + 1;
+      el.value = v;
+
+      set(
+        ref(db, "scores/" + el.id),
+        v
+      );
+
+    };
+
+    // รีเซ็ต
+    window.resetPage = () => {
+
+      if (!unlocked) return alert("ต้องปลดล็อกก่อน");
+      if (!confirm("ยืนยันรีเซ็ต?")) return;
+
+      ids.forEach(id => {
+        set(ref(db, "scores/" + id), 0);
+      });
+
+    };
+
+    // 🔒 ระบบล็อก
+    let unlocked = false;
+    const PASSWORD = "src1234";
+
+    window.unlock = () => {
+
+      if (document.getElementById("pass").value === PASSWORD) {
+
+        unlocked = true;
+        document.getElementById("status").textContent = "ปลดล็อกแล้ว";
+
+        ids.forEach(id =>
+          document.getElementById(id).disabled = false
+        );
+
+      } else {
+        alert("รหัสผิด");
+      }
+
+    };
+
+  </script>
 
 </body>
 </html>
