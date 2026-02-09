@@ -1,0 +1,134 @@
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f5f6fa;
+  text-align:center;
+}
+
+.topbar{
+  background:#2c3e50;
+  padding:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.topbar .left{
+  display:flex;
+  align-items:center;
+}
+
+.topbar .left a{
+  color:white;
+  text-decoration:none;
+  margin-right:10px;
+  padding:6px 10px;
+  border-radius:6px;
+}
+
+.topbar .left a.active{
+  background:#e62222;
+}
+
+.topbar .right{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.topbar .right input{
+  padding:4px;
+}
+
+.topbar .right button{
+  padding:5px 8px;
+}
+
+.card{
+  background:white;
+  width:220px;
+  margin:10px auto;
+  padding:10px;
+  border-radius:10px;
+  box-shadow:0 0 5px rgba(0,0,0,0.2);
+}
+
+.box{
+  width:100%;
+  font-size:20px;
+  text-align:center;
+}
+
+.front {
+    position: absolute;
+    right: 0;
+    bottom: 0px;
+    padding:0;
+    margin: 0;
+}
+
+.chadim:hover {
+    scale: 1.2;
+}
+.chadim {
+    transition: all 0.2S;
+}
+
+.no1{
+  position: fixed; 
+  bottom: 0px; 
+  left: 30px;  
+}
+
+.no1 img{
+  height: 600px;
+  width: 400px;
+}
+
+.bam:hover {
+    scale: 1.2;
+}
+.bam {
+    transition: all 0.2S;
+}
+
+.no2{
+  position: fixed; 
+  bottom: 0px; 
+  right: 30px;  
+}
+
+.no2 img{
+  height: 600px;
+  width: 400px;
+}
+
+.center-zone{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.row-candidates{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px; 
+}
+
+.row-candidates .candidate{
+  width: 260px;
+}
+
+.reset{
+  background:white;
+  width:100px;
+  margin:10px auto;
+  padding:10px;
+  border-radius:10px;
+  box-shadow:0 0 5px rgba(0,0,0,0.2);
+
+}
+* {
+  font-family: 'Kanit', sans-serif;
+}
