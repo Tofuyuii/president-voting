@@ -1,5 +1,5 @@
 let unlocked = false;
-let PASSWORD = "src1234";
+let PASSWORD = "sriracha.studentcouncil007shishinonajadonthackme";
 
 function unlock() {
 
