@@ -1,141 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>หน้ารวม</title>
-
-  <link rel="stylesheet" href="style.css">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap"
-    rel="stylesheet"
-  >
+<meta charset="UTF-8">
+<title>หน้ารวม</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-  <div class="no1">
-    <img
-      class="chadim"
-      src="https://img2.pic.in.th/-1---212e6652870f81251.png"
-      width="275"
-    >
-  </div>
+<div class="no1"><img class="chadim" src="https://img2.pic.in.th/-1---212e6652870f81251.png" width="275"></div>
+<div class="no2"><img class="bam" src="https://img5.pic.in.th/file/secure-sv1/-1---3e2b6fc49eb248aed.png" width="275"></div>
 
-  <div class="no2">
-    <img
-      class="bam"
-      src="https://img5.pic.in.th/file/secure-sv1/-1---3e2b6fc49eb248aed.png"
-      width="275"
-    >
-  </div>
+<nav class="topbar">
+<div class="left">
+<a href="index.html" class="active">รวม</a>
+<a href="page1.html">ตึก 4</a>
+<a href="page2.html">ตึก 5</a>
+<a href="page3.html">ลานพฤกษา</a>
+</div>
+</nav>
 
-  <nav class="topbar">
-    <div class="left">
-      <a href="index.html" class="active">รวม</a>
-      <a href="page1.html">ตึก 4</a>
-      <a href="page2.html">ตึก 5</a>
-      <a href="page3.html">ลานพฤกษา</a>
-    </div>
-  </nav>
+<h1>รวมคะแนนการเลือกตั้งประธานนักเรียน ประจำปีการศึกษา 2569</h1>
 
-  <h1>รวมคะแนนการเลือกตั้งประธานนักเรียน ประจำปีการศึกษา 2569</h1>
+<div class="card"><p>จำนวนผู้ใช้สิทธิเลือกตั้ง</p><div class="box">0</div></div>
 
-  <div class="card">
-    <p>จำนวนผู้ใช้สิทธิเลือกตั้ง</p>
-    <input id="total" class="box" readonly>
-  </div>
+<div class="center-zone">
+<div class="row-candidates">
 
-  <div class="center-zone">
-    <div class="row-candidates">
+<div class="card"><p>คะแนนผู้สมัครหมายเลข 1<br>นางสาวพิมรดา จรูญผล</p><div class="box">0</div></div>
+<div class="card"><p>คะแนนผู้สมัครหมายเลข 2<br>นางสาวรมย์นลิน สุวรรณรัตน์</p><div class="box">0</div></div>
 
-      <div class="card">
-        <p>
-          คะแนนผู้สมัครหมายเลข 1<br>
-          นางสาวพิมรดา จรูญผล
-        </p>
-        <input id="sum_c1" class="box" readonly>
-      </div>
+</div>
+</div>
 
-      <div class="card">
-        <p>
-          คะแนนผู้สมัครหมายเลข 2<br>
-          นางสาวรมย์นลิน สุวรรณรัตน์
-        </p>
-        <input id="sum_c2" class="box" readonly>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="card">
-    <p>จำนวนบัตรเสีย</p>
-    <input id="sum_bad" class="box" readonly>
-  </div>
-
-  <div class="card">
-    <p>จำนวนผู้ไม่ประสงค์ลงคะแนน</p>
-    <input id="sum_no" class="box" readonly>
-  </div>
-
-  <!-- 🔥 Firebase -->
-  <script type="module">
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCkpZBG5ElQT0dPRsQaBJm3_b82aFcybpI",
-      authDomain: "president-voting.firebaseapp.com",
-      databaseURL: "https://president-voting-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "president-voting",
-      storageBucket: "president-voting.firebasestorage.app",
-      messagingSenderId: "427343583507",
-      appId: "1:427343583507:web:cedc455f0e035d50b5e2e6"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const scoresRef = ref(db, "scores");
-
-    onValue(scoresRef, (snapshot) => {
-
-      const d = snapshot.val() || {};
-
-      let c1 =
-        (d.p1_c1 || 0) +
-        (d.p2_c1 || 0) +
-        (d.p3_c1 || 0);
-
-      let c2 =
-        (d.p1_c2 || 0) +
-        (d.p2_c2 || 0) +
-        (d.p3_c2 || 0);
-
-      let bad =
-        (d.p1_bad || 0) +
-        (d.p2_bad || 0) +
-        (d.p3_bad || 0);
-
-      let no =
-        (d.p1_no || 0) +
-        (d.p2_no || 0) +
-        (d.p3_no || 0);
-
-      document.getElementById("sum_c1").value = c1;
-      document.getElementById("sum_c2").value = c2;
-      document.getElementById("sum_bad").value = bad;
-      document.getElementById("sum_no").value = no;
-
-      document.getElementById("total").value =
-        c1 + c2 + bad + no;
-
-    });
-
-  </script>
+<div class="card"><p>จำนวนบัตรเสีย</p><div class="box">0</div></div>
+<div class="card"><p>จำนวนผู้ไม่ประสงค์ลงคะแนน</p><div class="box">0</div></div>
 
 </body>
 </html>

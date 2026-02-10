@@ -8,182 +8,44 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap"
-    rel="stylesheet"
-  >
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-  <div class="no1">
-    <img
-      class="chadim"
-      src="https://img2.pic.in.th/-1---212e6652870f81251.png"
-      width="275"
-    >
+<div class="no1"><img class="chadim" src="https://img2.pic.in.th/-1---212e6652870f81251.png" width="275"></div>
+<div class="no2"><img class="bam" src="https://img5.pic.in.th/file/secure-sv1/-1---3e2b6fc49eb248aed.png" width="275"></div>
+
+<nav class="topbar">
+  <div class="left">
+    <a href="index.html">รวม</a>
+    <a href="page1.html" class="active">ตึก 4</a>
+    <a href="page2.html">ตึก 5</a>
+    <a href="page3.html">ลานพฤกษา</a>
   </div>
+</nav>
 
-  <div class="no2">
-    <img
-      class="bam"
-      src="https://img5.pic.in.th/file/secure-sv1/-1---3e2b6fc49eb248aed.png"
-      width="275"
-    >
-  </div>
+<h2>ตึก 4</h2>
 
-  <nav class="topbar">
-    <div class="left">
-      <a href="index.html">รวม</a>
-      <a href="page1.html" class="active">ตึก 4</a>
-      <a href="page2.html">ตึก 5</a>
-      <a href="page3.html">ลานพฤกษา</a>
-    </div>
+<div class="card">
+  <p>คะแนนผู้สมัครหมายเลข 1<br>นางสาวพิมรดา จรูญผล</p>
+  <div class="box score">379</div>
+</div>
 
-    <div class="right">
-      <input type="password" id="pass" placeholder="รหัส">
-      <button onclick="unlock()">ปลดล็อก</button>
-      <span id="status">ล็อกอยู่</span>
-    </div>
-  </nav>
+<div class="card">
+  <p>คะแนนผู้สมัครหมายเลข 2<br>นางสาวรมย์นลิน สุวรรณรัตน์</p>
+  <div class="box score">414</div>
+</div>
 
-  <h2>ตึก 1</h2>
+<div class="card">
+  <p>จำนวนบัตรเสีย</p>
+  <div class="box score">23</div>
+</div>
 
-  <div class="card">
-    <p>
-      คะแนนผู้สมัครหมายเลข 1<br>
-      นางสาวพิมรดา จรูญผล
-    </p>
-    <input
-      id="p1_c1"
-      class="box score"
-      onclick="add(this)"
-      disabled
-    >
-  </div>
-
-  <div class="card">
-    <p>
-      คะแนนผู้สมัครหมายเลข 2<br>
-      นางสาวรมย์นลิน สุวรรณรัตน์
-    </p>
-    <input
-      id="p1_c2"
-      class="box score"
-      onclick="add(this)"
-      disabled
-    >
-  </div>
-
-  <div class="card">
-    <p>จำนวนบัตรเสีย</p>
-    <input
-      id="p1_bad"
-      class="box score"
-      onclick="add(this)"
-      disabled
-    >
-  </div>
-
-  <div class="card">
-    <p>จำนวนผู้ไม่ประสงค์ลงคะแนน</p>
-    <input
-      id="p1_no"
-      class="box score"
-      onclick="add(this)"
-      disabled
-    >
-  </div>
-
-  <div class="reset">
-    <button onclick="resetPage()">รีเซ็ตคะแนน</button>
-  </div>
-
-  <script type="module">
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCkpZBG5ElQT0dPRsQaBJm3_b82aFcybpI",
-      authDomain: "president-voting.firebaseapp.com",
-      databaseURL: "https://president-voting-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "president-voting",
-      storageBucket: "president-voting.firebasestorage.app",
-      messagingSenderId: "427343583507",
-      appId: "1:427343583507:web:cedc455f0e035d50b5e2e6"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const ids = [
-      "p1_c1",
-      "p1_c2",
-      "p1_bad",
-      "p1_no"
-    ];
-
-    // โหลดค่าจาก Firebase
-    ids.forEach(id => {
-
-      const r = ref(db, "scores/" + id);
-
-      onValue(r, snap => {
-        document.getElementById(id).value = snap.val() || 0;
-      });
-
-    });
-
-    // เพิ่มคะแนน
-    window.add = (el) => {
-
-      if (el.disabled) return;
-
-      let v = Number(el.value || 0) + 1;
-      el.value = v;
-
-      set(
-        ref(db, "scores/" + el.id),
-        v
-      );
-
-    };
-
-    // รีเซ็ต
-    window.resetPage = () => {
-
-      if (!unlocked) return alert("ต้องปลดล็อกก่อน");
-      if (!confirm("ยืนยันรีเซ็ต?")) return;
-
-      ids.forEach(id => {
-        set(ref(db, "scores/" + id), 0);
-      });
-
-    };
-
-    // 🔒 ระบบล็อก
-    let unlocked = false;
-    const PASSWORD = "src1234";
-
-    window.unlock = () => {
-
-      if (document.getElementById("pass").value === PASSWORD) {
-
-        unlocked = true;
-        document.getElementById("status").textContent = "ปลดล็อกแล้ว";
-
-        ids.forEach(id =>
-          document.getElementById(id).disabled = false
-        );
-
-      } else {
-        alert("รหัสผิด");
-      }
-
-    };
-
-  </script>
+<div class="card">
+  <p>จำนวนผู้ไม่ประสงค์ลงคะแนน</p>
+  <div class="box score">107</div>
+</div>
 
 </body>
 </html>
